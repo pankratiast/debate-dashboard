@@ -1,0 +1,110 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e6f0fa;
+    margin: 0;
+    min-height: 100vh;
+}
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+.top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.resolution {
+    font-size: 24px;
+    margin-bottom: 0;
+    flex: 1;
+    text-align: center;
+}
+.reset {
+    margin-right: 30px;
+    margin-top: 0;
+}
+.center-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    margin: 30px 0 20px 0;
+}
+.vote-count {
+    margin: 0 auto 20px auto;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    background: #fff;
+    min-width: 320px;
+    max-width: 400px;
+}
+.container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.coin {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at 30% 30%, #ffd700 80%, #bfa100 100%);
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    perspective: 600px;
+    transition: box-shadow 0.2s;
+}
+.coin.flipping {
+    animation: coin-flip 1s cubic-bezier(.36,2.01,.68,.54);
+}
+@keyframes coin-flip {
+    0% { transform: rotateY(0deg); }
+    30% { box-shadow: 0 8px 24px #bfa100; }
+    50% { transform: rotateY(1800deg); }
+    100% { transform: rotateY(3600deg); }
+}
+.timer {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+    display: inline-block;
+    border-radius: 8px;
+    background: #fff;
+}
+.timer-input {
+    width: 60px;
+}
+.timer-display {
+    font-size: 20px;
+    color: black;
+}
+.vote-btn {
+    margin: 5px;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 5px;
+    border: 1px solid #888;
+    background: #f0f0f0;
+    transition: background 0.2s;
+}
+.vote-btn:hover {
+    background: #dbeafe;
+}
