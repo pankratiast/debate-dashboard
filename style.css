@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.cdnfonts.com/css/bagnard');
+
 body {
     font-family: 'Cinzel', 'EB Garamond', serif;
     background: url('background.jpg') no-repeat center center fixed;
@@ -7,87 +10,167 @@ body {
     cursor: url('gladius-cursor.png'), auto;
 }
 .main-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
     background: rgba(255, 255, 255, 0.80);
     backdrop-filter: blur(8px);
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(44, 64, 120, 0.18);
-    margin: 32px auto;
+    margin: 0 auto;
     padding: 32px 0 32px 0;
-    max-width: 900px;
-    border: 3px solid #2b5486;
+    max-width: 1000px;
+    overflow: hidden;
+}
+.reset {
+    grid-row: 1;
+    grid-column: 2;
+    align-self: start;
+    justify-self: end;
+    position: relative;
+    top: 18px;
+    right: 0;
+    z-index: 10;
+}
+.reset button {
+    background: linear-gradient(145deg, #204e80, #2b5486);
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(44,64,120,0.18);
+    transition: all 0.3s ease;
+}
+.reset button:hover {
+    background: #bfa76f;
+    color: #204e80;
 }
 .title {
     font-family: 'Cinzel', serif;
-    font-size: 36px;
-    font-weight: bold;
+    font-size: 3.2em;
+    font-weight: 700;
     text-align: center;
-    margin: 20px 0 10px 0;
+    margin: 32px 0 10px 0;
     color: #204e80;
-    text-shadow: 2px 2px 4px rgba(44,64,120,0.10);
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 12px #bfa76f, 0 1px 0 #fff, 0 0px 8px #204e8044;
+    border-bottom: 3px solid #bfa76f;
+    padding-bottom: 10px;
+    background: linear-gradient(90deg, #eaf2fb 0%, #b3c7e6 100%);
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 2px 8px rgba(44,64,120,0.08);
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
 .resolution {
-    max-width: 700px;
-    min-width: 300px;
-    min-height: 80px;
-    margin: 0 auto 24px auto;
+    grid-row: 1;
+    grid-column: 1;
+    align-self: start;
+    justify-self: start;
+    margin-top: 18px;
+    max-width: 420px;
+    min-width: 220px;
+    min-height: 36px;
     background: rgba(255,255,255,0.95);
-    border: 3px solid #2b5486;
-    border-radius: 16px;
+    border: 2.5px solid #2b5486;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(44,64,120,0.10);
     color: #204e80;
-    padding: 28px 22px;
-    font-size: 1.3em;
+    padding: 12px 16px;
+    font-size: 1.1em;
     font-family: 'EB Garamond', serif;
-}
-.vote-count {
     text-align: center;
+    position: relative;
+}
+.resolution.empty:before {
+    content: attr(data-placeholder);
+    color: #b3c7e6;
+    opacity: 1;
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-size: 1.1em;
+}
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 28px 32px;
+    width: 90vw;
+    max-width: 900px;
+    margin: 0 auto;
+    align-items: stretch;
+    justify-items: center;
+}
+.coin-flip {
+    grid-row: 2;
+    grid-column: 1;
     background: rgba(255,255,255,0.95);
     border: 3px solid #2b5486;
     border-radius: 18px;
     box-shadow: 0 4px 18px rgba(44,64,120,0.10);
-    margin: 0 auto 20px auto;
-    padding: 28px 18px;
-    min-width: 320px;
-    max-width: 400px;
-    color: #204e80;
-}
-.vote-btn {
-    display: inline-block;
-    margin: 8px auto;
-    background: linear-gradient(145deg, #eaf2fb, #b3c7e6);
-    color: #204e80;
-    border: 2px solid #2b5486;
-    border-radius: 8px;
-    font-family: 'Cinzel', serif;
-    font-weight: bold;
-    padding: 10px 24px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    box-shadow: 0 2px 8px rgba(44,64,120,0.08);
-}
-.vote-btn:hover {
-    background: #204e80;
-    color: #fff;
-}
-.vote-row {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-}
-.vote-count p {
+    padding: 24px 18px 18px 18px;
+    min-width: 220px;
+    max-width: 320px;
     text-align: center;
+    margin: 0 auto;
 }
 .timer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    grid-row: 2;
+    grid-column: 2;
     background: rgba(255,255,255,0.95);
-    border: 2px solid #b3c7e6;
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(44,64,120,0.08);
-    padding: 18px 12px;
+    border: 3px solid #2b5486;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(44,64,120,0.10);
+    padding: 24px 18px 18px 18px;
+    min-width: 220px;
+    max-width: 320px;
+    text-align: center;
+    margin: 0 auto;
+}
+.coin {
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle at 30% 30%, #334a7a 80%, #2b5486 100%);
+    border: 3px solid #bfa76f;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 36px;
+    box-shadow: 0 2px 8px rgba(44,64,120,0.10);
+    perspective: 600px;
+    transition: box-shadow 0.2s;
+    color: #fff;
+}
+.coin.flipping {
+    animation: coin-flip-y 1s cubic-bezier(.36,2.01,.68,.54);
+}
+@keyframes coin-flip-y {
+    0% { transform: rotateY(0deg); }
+    30% { box-shadow: 0 8px 24px #204e80; }
+    50% { transform: rotateY(1800deg); }
+    100% { transform: rotateY(3600deg); }
+}
+.timer-display {
+    font-size: 2.8em;
+    color: #204e80;
+    font-weight: bold;
+    margin-top: 12px;
+    letter-spacing: 2px;
 }
 .timer-input-row {
     display: flex;
@@ -104,53 +187,65 @@ body {
     background: #f7fafc;
     padding: 4px 8px;
 }
-.coin-flip {
+.vote-count {
+    grid-row: 3;
+    grid-column: 1;
+    align-self: start;
+    text-align: center;
     background: rgba(255,255,255,0.95);
     border: 3px solid #2b5486;
     border-radius: 18px;
     box-shadow: 0 4px 18px rgba(44,64,120,0.10);
-    padding: 18px 12px;
-}
-.coin {
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle at 30% 30%, #334a7a 80%, #2b5486 100%);
-    border: 3px solid #bfa76f;
-    border-radius: 50%;
-    margin: 0 auto 10px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 32px;
-    box-shadow: 0 2px 8px rgba(44,64,120,0.10);
-    perspective: 600px;
-    transition: box-shadow 0.2s;
-    color: #fff;
-}
-.coin.flipping {
-    animation: coin-flip 1s cubic-bezier(.36,2.01,.68,.54);
-}
-@keyframes coin-flip {
-    0% { transform: rotateY(0deg); }
-    30% { box-shadow: 0 8px 24px #204e80; }
-    50% { transform: rotateY(1800deg); }
-    100% { transform: rotateY(3600deg); }
+    margin: 0 auto 0 auto;
+    padding: 28px 18px;
+    min-width: 260px;
+    max-width: 340px;
+    color: #204e80;
 }
 .declare-winner {
+    grid-row: 3;
+    grid-column: 2;
+    align-self: start;
     background: rgba(255,255,255,0.97);
     border: 3px solid #2b5486;
     border-radius: 18px;
     box-shadow: 0 4px 18px rgba(44,64,120,0.10);
-    margin: 32px auto 0 auto;
+    margin: 0 auto 0 auto;
     padding: 24px 18px 18px 18px;
-    max-width: 400px;
+    max-width: 340px;
     text-align: center;
     color: #204e80;
     font-family: 'Cinzel', serif;
     font-size: 1.3em;
     position: relative;
     overflow: hidden;
+}
+.vote-btn {
+    display: inline-block;
+    margin: 8px auto;
+    background: linear-gradient(145deg, #eaf2fb, #b3c7e6);
+    color: #204e80;
+    border: 2px solid #2b5486;
+    border-radius: 8px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    padding: 10px 24px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 2px 8px rgba(44,64,120,0.08);
+}
+.vote-btn:hover, .declare-winner .winner-btn:hover {
+    background: #204e80;
+    color: #fff;
+}
+.vote-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+.vote-count p {
+    text-align: center;
 }
 .declare-winner .winner-btn {
     margin: 12px 16px 0 16px;
@@ -164,10 +259,6 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-}
-.declare-winner .winner-btn:hover {
-    background: #204e80;
-    color: #fff;
 }
 @keyframes confetti {
     0% { opacity: 0; transform: translateY(-40px) scale(0.7) rotate(-10deg); }
@@ -183,4 +274,22 @@ body {
     pointer-events: none;
     animation: confetti 1.2s ease-in-out;
     z-index: 2;
+}
+.main-title {
+    font-family: 'Bagnard', 'IM Fell English', serif, sans-serif;
+    font-size: 3.5em;
+    font-weight: 700;
+    text-align: center;
+    color: #204e80;
+    letter-spacing: 4px;
+    text-shadow: 0 2px 12px #bfa76f, 0 1px 0 #fff, 0 0px 8px #204e8044;
+    margin-top: 32px;
+    margin-bottom: 18px;
+    background: linear-gradient(90deg, #eaf2fb 0%, #b3c7e6 100%);
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 2px 8px rgba(44,64,120,0.08);
+    padding-bottom: 10px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }
