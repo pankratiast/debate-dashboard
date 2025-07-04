@@ -25,6 +25,7 @@
                     <input type="number" class="timer-input" min="0" max="55" step="5" placeholder="Sec" id="timer-sec">
                 </div>
                 <button onclick="startTimer()">Start</button>
+                <button onclick="resetTimer()" style="margin-top:8px;">Reset Timer</button>
                 <div class="timer-display" id="timer">00:00</div>
             </div>
             <div class="vote-count">
@@ -98,6 +99,15 @@
             timeLeft--;
         }
 
+        function resetTimer() {
+            clearInterval(timer);
+            document.getElementById('timer').textContent = '00:00';
+            document.getElementById('timer').style.color = '#204e80';
+            document.getElementById('timer-min').value = '';
+            document.getElementById('timer-sec').value = '';
+            timeLeft = 0;
+        }
+
         let votes = { 'pre-aff': 0, 'pre-neg': 0, 'post-aff': 0, 'post-neg': 0 };
 
         function vote(type) {
@@ -125,7 +135,7 @@
             void coin.offsetWidth; // force reflow
             coin.classList.add('flipping');
             setTimeout(() => {
-                const isHeads = Math.random() > 0.5;
+                const isHeads = Math.floor(Math.random() * 2) === 0;
                 coin.textContent = isHeads ? '☀️' : '🌙';
                 coin.setAttribute('title', isHeads ? 'Heads' : 'Tails');
                 coin.classList.remove('flipping');
