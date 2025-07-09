@@ -9,14 +9,38 @@
 <body>
     <div class="main-layout">
         <div class="main-title">Rostra Debate Dashboard</div>
+        <!-- 1. PARTICIPANT NAMES SECTION -->
+        <div class="participants-section">
+            <div class="participants-label">Affirmative 🏛️ | Negative ⚔️</div>
+            <div class="participants-input-row">
+                <input type="text" id="aff-name" class="participant-input" placeholder="Affirmative Name">
+                <span class="vs-label">vs.</span>
+                <input type="text" id="neg-name" class="participant-input" placeholder="Negative Name">
+            </div>
+            <div class="participants-display">
+                <span id="aff-name-display">Affirmative</span> <span class="vs-label">vs.</span> <span id="neg-name-display">Negative</span>
+            </div>
+        </div>
         <div class="dashboard-grid">
             <div class="resolution empty" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE"></div>
             <div class="reset">
                 <button onclick="resetAll()">Reset All</button>
             </div>
             <div class="coin-flip">
+                <div id="coin-result" class="coin-result"></div>
                 <div class="coin" id="coin">🪙</div>
                 <button onclick="flipCoin()">Flip Coin</button>
+            </div>
+            <!-- 3. DEBATE STAGE SECTION -->
+            <div class="debate-stage-section">
+                <div class="stage-header">Debate Stages</div>
+                <div class="stage-controls">
+                    <button id="stage-back" onclick="changeStage(-1)">&#8593; Back</button>
+                    <button id="stage-forward" onclick="changeStage(1)">Forward &#8595;</button>
+                </div>
+                <ol class="stage-list" id="stage-list">
+                    <!-- Stages will be rendered here -->
+                </ol>
             </div>
             <div class="timer">
                 <div class="timer-input-row">
@@ -127,22 +151,25 @@
             document.querySelector('.resolution').textContent = '';
             document.getElementById('timer-min').value = '';
             document.getElementById('timer-sec').value = '';
-        }
-
-        function flipCoin() {
+            // Reset participant names
+            document.getElementById('aff-name').value = '';
+            document.getElementById('neg-name').value = '';
+            updateParticipantDisplay();
+            // Reset debate stage
+            currentStage = 0;
+            renderStages();
+            // Reset coin flip
             const coin = document.getElementById('coin');
-            coin.classList.remove('flipping');
-            void coin.offsetWidth; // force reflow
-            coin.classList.add('flipping');
-            setTimeout(() => {
-                const isHeads = Math.floor(Math.random() * 2) === 0;
-                coin.textContent = isHeads ? '☀️' : '🌙';
-                coin.setAttribute('title', isHeads ? 'Heads' : 'Tails');
-                coin.classList.remove('flipping');
-            }, 950);
+            coin.textContent = '��';
+            coin.setAttribute('title', '');
+            document.getElementById('coin-result').textContent = '';
         }
 
-        // Placeholder for contenteditable resolution box
+        // PARTICIPANT NAME LOGIC
+        function updateParticipantDisplay() {
+            document.getElementById('aff-name-display').textContent = document.getElementById('aff-name').value || 'Affirmative';
+            document.getElementById('neg-name-display').textContent = document.getElementById('neg-name').value || 'Negative';
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const resBox = document.getElementById('resolution-box');
             function updatePlaceholder() {
@@ -154,6 +181,56 @@
             }
             resBox.addEventListener('input', updatePlaceholder);
             updatePlaceholder();
+            document.getElementById('aff-name').addEventListener('input', updateParticipantDisplay);
+            document.getElementById('neg-name').addEventListener('input', updateParticipantDisplay);
+            updateParticipantDisplay();
+        });
+
+        // COIN FLIP LOGIC WITH RESULT TEXT
+        function flipCoin() {
+            const coin = document.getElementById('coin');
+            const coinResult = document.getElementById('coin-result');
+            coin.classList.remove('flipping');
+            void coin.offsetWidth; // force reflow
+            coin.classList.add('flipping');
+            setTimeout(() => {
+                const isHeads = Math.floor(Math.random() * 2) === 0;
+                coin.textContent = isHeads ? '☀️' : '🌙';
+                coin.setAttribute('title', isHeads ? 'Heads' : 'Tails');
+                coin.classList.remove('flipping');
+                coinResult.textContent = isHeads ? 'Heads!' : 'Tails!';
+            }, 950);
+        }
+
+        // DEBATE STAGE LOGIC
+        const debateStages = [
+            'Pre-Debate Vote Count',
+            'Affirmative Constructive Speech',
+            'Negative Interpellation',
+            'Negative Constructive Speech',
+            'Affirmative Interpellation',
+            'Questions from Judges',
+            'Negative Closing Argument',
+            'Affirmative Closing Argument',
+            'Post-Debate Vote Count'
+        ];
+        let currentStage = 0;
+        function renderStages() {
+            const stageList = document.getElementById('stage-list');
+            stageList.innerHTML = '';
+            debateStages.forEach((stage, idx) => {
+                const li = document.createElement('li');
+                li.textContent = stage;
+                li.className = idx === currentStage ? 'stage-current' : (idx < currentStage ? 'stage-complete' : '');
+                stageList.appendChild(li);
+            });
+        }
+        function changeStage(delta) {
+            currentStage = Math.max(0, Math.min(debateStages.length - 1, currentStage + delta));
+            renderStages();
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStages();
         });
 
         function declareWinner(side) {
