@@ -449,3 +449,92 @@ body {
     color: #bfa76f;
     opacity: 0.7;
 }
+
+/* JUDGES SECTION */
+.judges-section {
+    background: rgba(255,255,255,0.95);
+    border: 2.5px solid #2b5486;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(44,64,120,0.10);
+    color: #204e80;
+    padding: 14px 18px 10px 18px;
+    margin: 18px auto 0 auto;
+    max-width: 420px;
+    min-width: 280px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+}
+
+.judges-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #204e80;
+}
+
+.judge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 12px;
+}
+
+.judge-name {
+    flex: 1;
+    border: 2px solid #bfa76f;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #204e80;
+    background: #f7fafc;
+    padding: 6px 8px;
+    font-family: 'EB Garamond', serif;
+    min-width: 120px;
+}
+
+.judge-decision {
+    display: flex;
+    gap: 4px;
+}
+
+.decision-btn {
+    background: linear-gradient(145deg, #eaf2fb, #b3c7e6);
+    color: #204e80;
+    border: 2px solid #2b5486;
+    border-radius: 6px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(44,64,120,0.08);
+    min-width: 45px;
+}
+
+.decision-btn:hover {
+    background: #204e80;
+    color: #fff;
+}
+
+.decision-btn.selected {
+    background: #bfa76f;
+    color: #204e80;
+    border-color: #bfa76f;
+    box-shadow: 0 2px 8px rgba(191, 167, 111, 0.3);
+}
+
+.judges-result {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #eaf2fb;
+    border: 2px solid #bfa76f;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #204e80;
+    min-height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

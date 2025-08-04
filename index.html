@@ -81,6 +81,35 @@
                 <button class="winner-btn" onclick="declareWinner('Affirmative')">Affirmative</button>
                 <button class="winner-btn" onclick="declareWinner('Negative')">Negative</button>
             </div>
+            <div class="judges-section draggable" draggable="true" data-section="judges">
+                <div class="drag-handle">⋮⋮</div>
+                <div class="judges-header">Judges' Decision</div>
+                <div class="judge-row">
+                    <input type="text" class="judge-name" placeholder="Judge 1 Name" id="judge1-name">
+                    <div class="judge-decision">
+                        <button class="decision-btn" onclick="setJudgeDecision(1, 'aff')" id="judge1-aff">Aff</button>
+                        <button class="decision-btn" onclick="setJudgeDecision(1, 'neg')" id="judge1-neg">Neg</button>
+                        <button class="decision-btn" onclick="setJudgeDecision(1, 'draw')" id="judge1-draw">Draw</button>
+                    </div>
+                </div>
+                <div class="judge-row">
+                    <input type="text" class="judge-name" placeholder="Judge 2 Name" id="judge2-name">
+                    <div class="judge-decision">
+                        <button class="decision-btn" onclick="setJudgeDecision(2, 'aff')" id="judge2-aff">Aff</button>
+                        <button class="decision-btn" onclick="setJudgeDecision(2, 'neg')" id="judge2-neg">Neg</button>
+                        <button class="decision-btn" onclick="setJudgeDecision(2, 'draw')" id="judge2-draw">Draw</button>
+                    </div>
+                </div>
+                <div class="judge-row">
+                    <input type="text" class="judge-name" placeholder="Judge 3 Name" id="judge3-name">
+                    <div class="judge-decision">
+                        <button class="decision-btn" onclick="setJudgeDecision(3, 'aff')" id="judge3-aff">Aff</button>
+                        <button class="decision-btn" onclick="setJudgeDecision(3, 'neg')" id="judge3-neg">Neg</button>
+                        <button class="decision-btn" onclick="setJudgeDecision(3, 'draw')" id="judge3-draw">Draw</button>
+                    </div>
+                </div>
+                <div class="judges-result" id="judges-result"></div>
+            </div>
         </div>
     </div>
 
@@ -241,6 +270,77 @@
             document.getElementById(`${type}-count`).textContent = votes[type];
         }
 
+        function declareWinner(side) {
+            const box = document.getElementById('declare-winner-box');
+            const confettiContainer = document.getElementById('confetti-container');
+            confettiContainer.innerHTML = '';
+            let emoji = side === 'Affirmative' ? '🏛️' : '⚔️';
+            for (let i = 0; i < 8; i++) {
+                const conf = document.createElement('span');
+                conf.className = 'confetti';
+                conf.style.left = (10 + Math.random() * 80) + '%';
+                conf.style.animationDelay = (Math.random() * 0.3) + 's';
+                conf.textContent = emoji;
+                confettiContainer.appendChild(conf);
+            }
+            setTimeout(() => { confettiContainer.innerHTML = ''; }, 1400);
+        }
+
+        // JUDGES FUNCTIONALITY
+        let judgeDecisions = { 1: null, 2: null, 3: null };
+
+        function setJudgeDecision(judgeNum, decision) {
+            // Remove selected class from all buttons for this judge
+            document.getElementById(`judge${judgeNum}-aff`).classList.remove('selected');
+            document.getElementById(`judge${judgeNum}-neg`).classList.remove('selected');
+            document.getElementById(`judge${judgeNum}-draw`).classList.remove('selected');
+            
+            // Add selected class to clicked button
+            document.getElementById(`judge${judgeNum}-${decision}`).classList.add('selected');
+            
+            // Store the decision
+            judgeDecisions[judgeNum] = decision;
+            
+            // Calculate and display result
+            calculateJudgesResult();
+        }
+
+        function calculateJudgesResult() {
+            const decisions = Object.values(judgeDecisions);
+            const affCount = decisions.filter(d => d === 'aff').length;
+            const negCount = decisions.filter(d => d === 'neg').length;
+            const drawCount = decisions.filter(d => d === 'draw').length;
+            
+            let result = '';
+            
+            if (affCount === 3) {
+                result = 'Unanimous Decision: Affirmative Wins';
+            } else if (negCount === 3) {
+                result = 'Unanimous Decision: Negative Wins';
+            } else if (affCount === 2 && drawCount === 1) {
+                result = 'Majority Win: Affirmative Wins';
+            } else if (negCount === 2 && drawCount === 1) {
+                result = 'Majority Win: Negative Wins';
+            } else if (affCount === 2 && negCount === 1) {
+                result = 'Split Win: Affirmative Wins';
+            } else if (negCount === 2 && affCount === 1) {
+                result = 'Split Win: Negative Wins';
+            } else if (affCount === 1 && drawCount === 2) {
+                result = 'Majority Draw: Affirmative Wins';
+            } else if (negCount === 1 && drawCount === 2) {
+                result = 'Majority Draw: Negative Wins';
+            } else if (drawCount === 3) {
+                result = 'Draw: All Judges Declare Draw';
+            } else if (affCount === 1 && negCount === 1 && drawCount === 1) {
+                result = 'Split Decision: No Clear Winner';
+            } else {
+                result = 'Enter all judges\' decisions';
+            }
+            
+            document.getElementById('judges-result').textContent = result;
+        }
+
+        // Add judges reset to resetAll function
         function resetAll() {
             votes = { 'pre-aff': 0, 'pre-neg': 0, 'post-aff': 0, 'post-neg': 0 };
             document.getElementById('pre-aff-count').textContent = '0';
@@ -265,6 +365,21 @@
             coin.textContent = '🪙';
             coin.setAttribute('title', '');
             document.getElementById('coin-result').textContent = '';
+            // Reset judges
+            judgeDecisions = { 1: null, 2: null, 3: null };
+            document.getElementById('judge1-name').value = '';
+            document.getElementById('judge2-name').value = '';
+            document.getElementById('judge3-name').value = '';
+            document.getElementById('judge1-aff').classList.remove('selected');
+            document.getElementById('judge1-neg').classList.remove('selected');
+            document.getElementById('judge1-draw').classList.remove('selected');
+            document.getElementById('judge2-aff').classList.remove('selected');
+            document.getElementById('judge2-neg').classList.remove('selected');
+            document.getElementById('judge2-draw').classList.remove('selected');
+            document.getElementById('judge3-aff').classList.remove('selected');
+            document.getElementById('judge3-neg').classList.remove('selected');
+            document.getElementById('judge3-draw').classList.remove('selected');
+            document.getElementById('judges-result').textContent = '';
         }
 
         // PARTICIPANT NAME LOGIC
@@ -334,22 +449,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             renderStages();
         });
-
-        function declareWinner(side) {
-            const box = document.getElementById('declare-winner-box');
-            const confettiContainer = document.getElementById('confetti-container');
-            confettiContainer.innerHTML = '';
-            let emoji = side === 'Affirmative' ? '🏛️' : '⚔️';
-            for (let i = 0; i < 8; i++) {
-                const conf = document.createElement('span');
-                conf.className = 'confetti';
-                conf.style.left = (10 + Math.random() * 80) + '%';
-                conf.style.animationDelay = (Math.random() * 0.3) + 's';
-                conf.textContent = emoji;
-                confettiContainer.appendChild(conf);
-            }
-            setTimeout(() => { confettiContainer.innerHTML = ''; }, 1400);
-        }
     </script>
 </body>
 </html>
