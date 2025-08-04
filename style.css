@@ -109,7 +109,6 @@ body {
     align-self: start;
     justify-self: start;
     margin-top: 18px;
-    max-width: 420px;
     min-width: 220px;
     min-height: 36px;
     background: rgba(255,255,255,0.95);
@@ -122,6 +121,24 @@ body {
     font-family: 'EB Garamond', serif;
     text-align: center;
     position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    resize: both;
+    overflow: auto;
+    cursor: grab;
+}
+
+.resolution:active {
+    cursor: grabbing;
+}
+
+.resolution::-webkit-resizer {
+    background: #bfa76f;
+    border: 2px solid #204e80;
+    border-radius: 4px;
+    width: 12px;
+    height: 12px;
 }
 .resolution.empty:before {
     content: attr(data-placeholder);
