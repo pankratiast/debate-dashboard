@@ -26,6 +26,39 @@ body {
     max-width: 1000px;
     overflow: hidden;
 }
+
+/* DRAG HANDLE STYLES */
+.drag-handle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #bfa76f;
+    font-size: 14px;
+    cursor: grab;
+    user-select: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.draggable:hover .drag-handle {
+    opacity: 1;
+}
+
+.draggable:active .drag-handle {
+    cursor: grabbing;
+}
+
+/* Make draggable elements have relative positioning by default */
+.draggable {
+    position: relative;
+    cursor: grab;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}
+
 .reset {
     grid-row: 1;
     grid-column: 2;

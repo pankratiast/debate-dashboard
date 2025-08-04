@@ -10,7 +10,8 @@
     <div class="main-layout">
         <div class="main-title">Rostra Debate Dashboard</div>
         <!-- 1. PARTICIPANT NAMES SECTION -->
-        <div class="participants-section">
+        <div class="participants-section draggable" draggable="true" data-section="participants">
+            <div class="drag-handle">⋮⋮</div>
             <div class="participants-label">Affirmative 🏛️ | Negative ⚔️</div>
             <div class="participants-input-row">
                 <input type="text" id="aff-name" class="participant-input" placeholder="Affirmative Name">
@@ -22,17 +23,22 @@
             </div>
         </div>
         <div class="dashboard-grid">
-            <div class="resolution empty" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE"></div>
-            <div class="reset">
+            <div class="resolution empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" draggable="true" data-section="resolution">
+                <div class="drag-handle">⋮⋮</div>
+            </div>
+            <div class="reset draggable" draggable="true" data-section="reset">
+                <div class="drag-handle">⋮⋮</div>
                 <button onclick="resetAll()">Reset All</button>
             </div>
-            <div class="coin-flip">
+            <div class="coin-flip draggable" draggable="true" data-section="coin-flip">
+                <div class="drag-handle">⋮⋮</div>
                 <div id="coin-result" class="coin-result"></div>
                 <div class="coin" id="coin">🪙</div>
                 <button onclick="flipCoin()">Flip Coin</button>
             </div>
             <!-- 3. DEBATE STAGE SECTION -->
-            <div class="debate-stage-section">
+            <div class="debate-stage-section draggable" draggable="true" data-section="debate-stage">
+                <div class="drag-handle">⋮⋮</div>
                 <div class="stage-header">Debate Stages</div>
                 <div class="stage-controls">
                     <button id="stage-back" onclick="changeStage(-1)">&#8593; Back</button>
@@ -42,7 +48,8 @@
                     <!-- Stages will be rendered here -->
                 </ol>
             </div>
-            <div class="timer">
+            <div class="timer draggable" draggable="true" data-section="timer">
+                <div class="drag-handle">⋮⋮</div>
                 <div class="timer-input-row">
                     <input type="number" class="timer-input" min="0" placeholder="Min" id="timer-min">
                     <span>:</span>
@@ -52,7 +59,8 @@
                 <button onclick="resetTimer()" style="margin-top:8px;">Reset Timer</button>
                 <div class="timer-display" id="timer">00:00</div>
             </div>
-            <div class="vote-count">
+            <div class="vote-count draggable" draggable="true" data-section="vote-count">
+                <div class="drag-handle">⋮⋮</div>
                 <h3>Pre-Debate Vote Count</h3>
                 <div class="vote-row">
                     <button class="vote-btn" onclick="vote('pre-aff')">Affirmative</button>
@@ -66,7 +74,8 @@
                 </div>
                 <p>Aff: <span id="post-aff-count">0</span> | Neg: <span id="post-neg-count">0</span></p>
             </div>
-            <div class="declare-winner" id="declare-winner-box">
+            <div class="declare-winner draggable" id="declare-winner-box" draggable="true" data-section="declare-winner">
+                <div class="drag-handle">⋮⋮</div>
                 <div id="confetti-container"></div>
                 <div>Declare Winner</div>
                 <button class="winner-btn" onclick="declareWinner('Affirmative')">Affirmative</button>
@@ -79,6 +88,99 @@
         let timer;
         let timeLeft = 0;
         let dingAudio = null;
+
+        // DRAG AND DROP FUNCTIONALITY
+        let draggedElement = null;
+        let offsetX, offsetY;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const draggables = document.querySelectorAll('.draggable');
+            
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', handleDragStart);
+                draggable.addEventListener('dragend', handleDragEnd);
+            });
+
+            const mainLayout = document.querySelector('.main-layout');
+            mainLayout.addEventListener('dragover', handleDragOver);
+            mainLayout.addEventListener('drop', handleDrop);
+        });
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            const rect = this.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            
+            // Make the element semi-transparent while dragging
+            this.style.opacity = '0.5';
+            this.style.zIndex = '1000';
+        }
+
+        function handleDragEnd(e) {
+            if (draggedElement) {
+                draggedElement.style.opacity = '1';
+                draggedElement.style.zIndex = 'auto';
+                draggedElement = null;
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedElement) {
+                const mainLayout = document.querySelector('.main-layout');
+                const rect = mainLayout.getBoundingClientRect();
+                
+                // Calculate new position relative to the main layout
+                const newX = e.clientX - rect.left - offsetX;
+                const newY = e.clientY - rect.top - offsetY;
+                
+                // Ensure the element stays within bounds
+                const maxX = rect.width - draggedElement.offsetWidth;
+                const maxY = rect.height - draggedElement.offsetHeight;
+                
+                const finalX = Math.max(0, Math.min(newX, maxX));
+                const finalY = Math.max(0, Math.min(newY, maxY));
+                
+                // Apply the new position
+                draggedElement.style.position = 'absolute';
+                draggedElement.style.left = finalX + 'px';
+                draggedElement.style.top = finalY + 'px';
+                
+                // Save position to localStorage
+                savePosition(draggedElement.dataset.section, finalX, finalY);
+            }
+        }
+
+        function savePosition(section, x, y) {
+            const positions = JSON.parse(localStorage.getItem('dashboardPositions') || '{}');
+            positions[section] = { x, y };
+            localStorage.setItem('dashboardPositions', JSON.stringify(positions));
+        }
+
+        function loadPositions() {
+            const positions = JSON.parse(localStorage.getItem('dashboardPositions') || '{}');
+            const draggables = document.querySelectorAll('.draggable');
+            
+            draggables.forEach(draggable => {
+                const section = draggable.dataset.section;
+                const position = positions[section];
+                if (position) {
+                    draggable.style.position = 'absolute';
+                    draggable.style.left = position.x + 'px';
+                    draggable.style.top = position.y + 'px';
+                }
+            });
+        }
+
+        // Load saved positions when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPositions();
+        });
 
         function playDing() {
             // Generate a simple beep using Web Audio API
@@ -160,7 +262,7 @@
             renderStages();
             // Reset coin flip
             const coin = document.getElementById('coin');
-            coin.textContent = '��';
+            coin.textContent = '🪙';
             coin.setAttribute('title', '');
             document.getElementById('coin-result').textContent = '';
         }
