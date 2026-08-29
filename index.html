@@ -8,104 +8,123 @@
 </head>
 <body>
     <div class="main-layout">
-        <div class="main-title">Rostra Debate Dashboard</div>
-        <!-- 1. PARTICIPANT NAMES SECTION -->
-        <div class="participants-section draggable" draggable="true" data-section="participants">
-            <div class="drag-handle">⋮⋮</div>
-            <div class="participants-label">Affirmative 🏛️ | Negative ⚔️</div>
-            <div class="participants-input-row">
-                <input type="text" id="aff-name" class="participant-input" placeholder="Affirmative Name">
-                <span class="vs-label">vs.</span>
-                <input type="text" id="neg-name" class="participant-input" placeholder="Negative Name">
+        <header class="site-header">
+            <div class="title-block">
+                <p class="eyebrow">Retro Rostra</p>
+                <div class="main-title">Rostra Debate Dashboard</div>
             </div>
-            <div class="participants-display">
-                <span id="aff-name-display">Affirmative</span> <span class="vs-label">vs.</span> <span id="neg-name-display">Negative</span>
+            <div class="toolbar">
+                <div class="reset draggable" draggable="true" data-section="reset">
+                    <div class="drag-handle">⋮⋮</div>
+                    <button class="btn-primary" onclick="resetAll()">Reset All</button>
+                </div>
             </div>
-        </div>
+        </header>
+
         <div class="dashboard-grid">
-            <div class="resolution empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" draggable="true" data-section="resolution">
-                <div class="drag-handle" style="top: 8px; right: 8px; z-index: 15;">⋮⋮</div>
-            </div>
-            <div class="reset draggable" draggable="true" data-section="reset">
+            <!-- 1. PARTICIPANT NAMES SECTION -->
+            <div class="participants-section panel draggable" draggable="true" data-section="participants">
                 <div class="drag-handle">⋮⋮</div>
-                <button onclick="resetAll()">Reset All</button>
+                <div class="participants-display">
+                    <span id="aff-name-display">Affirmative</span> <span class="vs-label">vs.</span> <span id="neg-name-display">Negative</span>
+                </div>
+                <div class="participants-label">Affirmative 🏛️ | Negative ⚔️</div>
+                <div class="participants-input-row">
+                    <input type="text" id="aff-name" class="participant-input" placeholder="Affirmative Name">
+                    <span class="vs-label vs-quiet">vs.</span>
+                    <input type="text" id="neg-name" class="participant-input" placeholder="Negative Name">
+                </div>
             </div>
-            <div class="coin-flip draggable" draggable="true" data-section="coin-flip">
+
+            <div class="resolution panel empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" draggable="true" data-section="resolution">
                 <div class="drag-handle">⋮⋮</div>
-                <div id="coin-result" class="coin-result"></div>
-                <div class="coin" id="coin">🪙</div>
-                <button onclick="flipCoin()">Flip Coin</button>
             </div>
+
             <!-- 3. DEBATE STAGE SECTION -->
-            <div class="debate-stage-section draggable" draggable="true" data-section="debate-stage">
+            <div class="debate-stage-section panel draggable" draggable="true" data-section="debate-stage">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="stage-header">Debate Stages</div>
                 <div class="stage-controls">
-                    <button id="stage-back" onclick="changeStage(-1)">&#8593; Back</button>
-                    <button id="stage-forward" onclick="changeStage(1)">Forward &#8595;</button>
+                    <button id="stage-back" class="btn-primary" onclick="changeStage(-1)">&#8593; Back</button>
+                    <button id="stage-forward" class="btn-primary" onclick="changeStage(1)">Forward &#8595;</button>
                 </div>
                 <ol class="stage-list" id="stage-list">
                     <!-- Stages will be rendered here -->
                 </ol>
             </div>
-            <div class="timer draggable" draggable="true" data-section="timer">
+
+            <div class="timer panel draggable" draggable="true" data-section="timer">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="timer-input-row">
                     <input type="number" class="timer-input" min="0" placeholder="Min" id="timer-min">
                     <span>:</span>
                     <input type="number" class="timer-input" min="0" max="55" step="5" placeholder="Sec" id="timer-sec">
                 </div>
-                <button onclick="startTimer()">Start</button>
-                <button onclick="resetTimer()" style="margin-top:8px;">Reset Timer</button>
+                <div class="timer-actions">
+                    <button class="btn-primary" onclick="startTimer()">Start</button>
+                    <button class="btn-ghost" onclick="resetTimer()">Reset Timer</button>
+                </div>
                 <div class="timer-display" id="timer">00:00</div>
             </div>
-            <div class="vote-count draggable" draggable="true" data-section="vote-count">
+
+            <div class="coin-flip panel draggable" draggable="true" data-section="coin-flip">
+                <div class="drag-handle">⋮⋮</div>
+                <div id="coin-result" class="coin-result"></div>
+                <div class="coin" id="coin">🪙</div>
+                <button class="btn-primary" onclick="flipCoin()">Flip Coin</button>
+            </div>
+
+            <div class="declare-winner panel draggable" id="declare-winner-box" draggable="true" data-section="declare-winner">
+                <div class="drag-handle">⋮⋮</div>
+                <div id="confetti-container"></div>
+                <div class="section-heading">Declare Winner</div>
+                <div class="winner-actions">
+                    <button class="winner-btn btn-primary" onclick="declareWinner('Affirmative')">Affirmative</button>
+                    <button class="winner-btn btn-primary" onclick="declareWinner('Negative')">Negative</button>
+                </div>
+            </div>
+
+            <div class="vote-count panel quiet draggable" draggable="true" data-section="vote-count">
                 <div class="drag-handle">⋮⋮</div>
                 <h3>Pre-Debate Vote Count</h3>
                 <div class="vote-row">
-                    <button class="vote-btn" onclick="vote('pre-aff')">Affirmative</button>
-                    <button class="vote-btn" onclick="vote('pre-neg')">Negative</button>
+                    <button class="vote-btn btn-ghost" onclick="vote('pre-aff')">Affirmative</button>
+                    <button class="vote-btn btn-ghost" onclick="vote('pre-neg')">Negative</button>
                 </div>
                 <p>Aff: <span id="pre-aff-count">0</span> | Neg: <span id="pre-neg-count">0</span></p>
                 <h3>Post-Debate Vote Count</h3>
                 <div class="vote-row">
-                    <button class="vote-btn" onclick="vote('post-aff')">Affirmative</button>
-                    <button class="vote-btn" onclick="vote('post-neg')">Negative</button>
+                    <button class="vote-btn btn-ghost" onclick="vote('post-aff')">Affirmative</button>
+                    <button class="vote-btn btn-ghost" onclick="vote('post-neg')">Negative</button>
                 </div>
                 <p>Aff: <span id="post-aff-count">0</span> | Neg: <span id="post-neg-count">0</span></p>
             </div>
-            <div class="declare-winner draggable" id="declare-winner-box" draggable="true" data-section="declare-winner">
-                <div class="drag-handle">⋮⋮</div>
-                <div id="confetti-container"></div>
-                <div>Declare Winner</div>
-                <button class="winner-btn" onclick="declareWinner('Affirmative')">Affirmative</button>
-                <button class="winner-btn" onclick="declareWinner('Negative')">Negative</button>
-            </div>
-            <div class="judges-section draggable" draggable="true" data-section="judges">
+
+            <div class="judges-section panel quiet draggable" draggable="true" data-section="judges">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="judges-header">Judges' Decision</div>
                 <div class="judge-row">
                     <input type="text" class="judge-name" placeholder="Judge 1 Name" id="judge1-name">
                     <div class="judge-decision">
-                        <button class="decision-btn" onclick="setJudgeDecision(1, 'aff')" id="judge1-aff">Aff</button>
-                        <button class="decision-btn" onclick="setJudgeDecision(1, 'neg')" id="judge1-neg">Neg</button>
-                        <button class="decision-btn" onclick="setJudgeDecision(1, 'draw')" id="judge1-draw">Draw</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(1, 'aff')" id="judge1-aff">Aff</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(1, 'neg')" id="judge1-neg">Neg</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(1, 'draw')" id="judge1-draw">Draw</button>
                     </div>
                 </div>
                 <div class="judge-row">
                     <input type="text" class="judge-name" placeholder="Judge 2 Name" id="judge2-name">
                     <div class="judge-decision">
-                        <button class="decision-btn" onclick="setJudgeDecision(2, 'aff')" id="judge2-aff">Aff</button>
-                        <button class="decision-btn" onclick="setJudgeDecision(2, 'neg')" id="judge2-neg">Neg</button>
-                        <button class="decision-btn" onclick="setJudgeDecision(2, 'draw')" id="judge2-draw">Draw</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(2, 'aff')" id="judge2-aff">Aff</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(2, 'neg')" id="judge2-neg">Neg</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(2, 'draw')" id="judge2-draw">Draw</button>
                     </div>
                 </div>
                 <div class="judge-row">
                     <input type="text" class="judge-name" placeholder="Judge 3 Name" id="judge3-name">
                     <div class="judge-decision">
-                        <button class="decision-btn" onclick="setJudgeDecision(3, 'aff')" id="judge3-aff">Aff</button>
-                        <button class="decision-btn" onclick="setJudgeDecision(3, 'neg')" id="judge3-neg">Neg</button>
-                        <button class="decision-btn" onclick="setJudgeDecision(3, 'draw')" id="judge3-draw">Draw</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(3, 'aff')" id="judge3-aff">Aff</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(3, 'neg')" id="judge3-neg">Neg</button>
+                        <button class="decision-btn btn-ghost" onclick="setJudgeDecision(3, 'draw')" id="judge3-draw">Draw</button>
                     </div>
                 </div>
                 <div class="judges-result" id="judges-result"></div>
