@@ -139,16 +139,16 @@
         // GRID SNAP — panels stay on the 12-col CSS grid. Drag from the ⋮⋮ handle.
         const COLS = 12;
         const MAX_ROWS = 10;
-        const LAYOUT_KEY = 'dashboardLayout';
+        const LAYOUT_KEY = 'dashboardLayoutV2';
         const DEFAULT_LAYOUT = {
-            participants: { col: 1, colSpan: 12, row: 1, rowSpan: 1 },
-            resolution: { col: 1, colSpan: 12, row: 2, rowSpan: 1 },
-            'debate-stage': { col: 1, colSpan: 5, row: 3, rowSpan: 3 },
-            timer: { col: 6, colSpan: 7, row: 3, rowSpan: 1 },
-            'coin-flip': { col: 6, colSpan: 3, row: 4, rowSpan: 1 },
-            'declare-winner': { col: 9, colSpan: 4, row: 4, rowSpan: 1 },
-            'vote-count': { col: 6, colSpan: 3, row: 5, rowSpan: 1 },
-            judges: { col: 9, colSpan: 4, row: 5, rowSpan: 1 }
+            participants: { col: 1, colSpan: 5, row: 1, rowSpan: 1 },
+            resolution: { col: 6, colSpan: 7, row: 1, rowSpan: 1 },
+            'debate-stage': { col: 1, colSpan: 4, row: 2, rowSpan: 2 },
+            timer: { col: 5, colSpan: 3, row: 2, rowSpan: 1 },
+            'coin-flip': { col: 8, colSpan: 2, row: 2, rowSpan: 1 },
+            'declare-winner': { col: 10, colSpan: 3, row: 2, rowSpan: 1 },
+            'vote-count': { col: 5, colSpan: 4, row: 3, rowSpan: 1 },
+            judges: { col: 9, colSpan: 4, row: 3, rowSpan: 1 }
         };
 
         let drag = null;
@@ -309,7 +309,7 @@
             const styles = getComputedStyle(grid);
             const gap = parseFloat(styles.columnGap) || 16;
             const colW = (rect.width - gap * (COLS - 1)) / COLS;
-            const rowH = Math.max(112, (rect.height - gap * 4) / 5);
+            const rowH = Math.max(88, (rect.height - gap * 2) / 3);
             return { grid, rect, gap, colW, rowH };
         }
 
