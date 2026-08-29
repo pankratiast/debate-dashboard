@@ -14,8 +14,7 @@
                 <div class="main-title">Rostra Debate Dashboard</div>
             </div>
             <div class="toolbar">
-                <div class="reset draggable" draggable="true" data-section="reset">
-                    <div class="drag-handle">⋮⋮</div>
+                <div class="reset">
                     <button class="btn-primary" onclick="resetAll()">Reset All</button>
                 </div>
             </div>
@@ -23,7 +22,7 @@
 
         <div class="dashboard-grid">
             <!-- 1. PARTICIPANT NAMES SECTION -->
-            <div class="participants-section panel draggable" draggable="true" data-section="participants">
+            <div class="participants-section panel draggable" data-section="participants">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="participants-display">
                     <span id="aff-name-display">Affirmative</span> <span class="vs-label">vs.</span> <span id="neg-name-display">Negative</span>
@@ -36,12 +35,12 @@
                 </div>
             </div>
 
-            <div class="resolution panel empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" draggable="true" data-section="resolution">
+            <div class="resolution panel empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" data-section="resolution">
                 <div class="drag-handle">⋮⋮</div>
             </div>
 
             <!-- 3. DEBATE STAGE SECTION -->
-            <div class="debate-stage-section panel draggable" draggable="true" data-section="debate-stage">
+            <div class="debate-stage-section panel draggable" data-section="debate-stage">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="stage-header">Debate Stages</div>
                 <div class="stage-controls">
@@ -53,7 +52,7 @@
                 </ol>
             </div>
 
-            <div class="timer panel draggable" draggable="true" data-section="timer">
+            <div class="timer panel draggable" data-section="timer">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="timer-input-row">
                     <input type="number" class="timer-input" min="0" placeholder="Min" id="timer-min">
@@ -67,14 +66,14 @@
                 <div class="timer-display" id="timer">00:00</div>
             </div>
 
-            <div class="coin-flip panel draggable" draggable="true" data-section="coin-flip">
+            <div class="coin-flip panel draggable" data-section="coin-flip">
                 <div class="drag-handle">⋮⋮</div>
                 <div id="coin-result" class="coin-result"></div>
                 <div class="coin" id="coin">🪙</div>
                 <button class="btn-primary" onclick="flipCoin()">Flip Coin</button>
             </div>
 
-            <div class="declare-winner panel draggable" id="declare-winner-box" draggable="true" data-section="declare-winner">
+            <div class="declare-winner panel draggable" id="declare-winner-box" data-section="declare-winner">
                 <div class="drag-handle">⋮⋮</div>
                 <div id="confetti-container"></div>
                 <div class="section-heading">Declare Winner</div>
@@ -84,7 +83,7 @@
                 </div>
             </div>
 
-            <div class="vote-count panel quiet draggable" draggable="true" data-section="vote-count">
+            <div class="vote-count panel quiet draggable" data-section="vote-count">
                 <div class="drag-handle">⋮⋮</div>
                 <h3>Pre-Debate Vote Count</h3>
                 <div class="vote-row">
@@ -100,7 +99,7 @@
                 <p>Aff: <span id="post-aff-count">0</span> | Neg: <span id="post-neg-count">0</span></p>
             </div>
 
-            <div class="judges-section panel quiet draggable" draggable="true" data-section="judges">
+            <div class="judges-section panel quiet draggable" data-section="judges">
                 <div class="drag-handle">⋮⋮</div>
                 <div class="judges-header">Judges' Decision</div>
                 <div class="judge-row">
@@ -137,97 +136,187 @@
         let timeLeft = 0;
         let dingAudio = null;
 
-        // DRAG AND DROP FUNCTIONALITY
-        let draggedElement = null;
-        let offsetX, offsetY;
+        // GRID SNAP — panels stay on the 12-col CSS grid. Drag from the ⋮⋮ handle.
+        const COLS = 12;
+        const MAX_ROWS = 10;
+        const LAYOUT_KEY = 'dashboardLayout';
+        const DEFAULT_LAYOUT = {
+            participants: { col: 1, colSpan: 12, row: 1, rowSpan: 1 },
+            resolution: { col: 1, colSpan: 12, row: 2, rowSpan: 1 },
+            'debate-stage': { col: 1, colSpan: 5, row: 3, rowSpan: 3 },
+            timer: { col: 6, colSpan: 7, row: 3, rowSpan: 1 },
+            'coin-flip': { col: 6, colSpan: 3, row: 4, rowSpan: 1 },
+            'declare-winner': { col: 9, colSpan: 4, row: 4, rowSpan: 1 },
+            'vote-count': { col: 6, colSpan: 3, row: 5, rowSpan: 1 },
+            judges: { col: 9, colSpan: 4, row: 5, rowSpan: 1 }
+        };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const draggables = document.querySelectorAll('.draggable');
-            
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', handleDragStart);
-                draggable.addEventListener('dragend', handleDragEnd);
+        let drag = null;
+
+        function gridPanels() {
+            return Array.from(document.querySelectorAll('.dashboard-grid .draggable'));
+        }
+
+        function defaultPlace(section) {
+            return Object.assign({}, DEFAULT_LAYOUT[section] || { col: 1, colSpan: 3, row: 1, rowSpan: 1 });
+        }
+
+        function readSaved() {
+            try {
+                return JSON.parse(localStorage.getItem(LAYOUT_KEY) || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function isGridPlace(p) {
+            return p && Number.isInteger(p.col) && Number.isInteger(p.row)
+                && Number.isInteger(p.colSpan) && Number.isInteger(p.rowSpan);
+        }
+
+        function currentPlace(el) {
+            const def = defaultPlace(el.dataset.section);
+            const saved = readSaved()[el.dataset.section];
+            if (isGridPlace(saved)) return Object.assign({}, def, saved);
+            return def;
+        }
+
+        function applyPlacement(el, place) {
+            el.classList.remove('dragging');
+            el.style.position = '';
+            el.style.left = '';
+            el.style.top = '';
+            el.style.width = '';
+            el.style.height = '';
+            el.style.zIndex = '';
+            el.style.opacity = '';
+            el.style.gridColumn = place.col + ' / span ' + place.colSpan;
+            el.style.gridRow = place.row + ' / span ' + place.rowSpan;
+        }
+
+        function savePlace(section, place) {
+            const all = readSaved();
+            all[section] = {
+                col: place.col,
+                colSpan: place.colSpan,
+                row: place.row,
+                rowSpan: place.rowSpan
+            };
+            localStorage.setItem(LAYOUT_KEY, JSON.stringify(all));
+            localStorage.removeItem('dashboardPositions');
+        }
+
+        function resetLayout() {
+            localStorage.removeItem(LAYOUT_KEY);
+            localStorage.removeItem('dashboardPositions');
+            gridPanels().forEach(el => applyPlacement(el, defaultPlace(el.dataset.section)));
+        }
+
+        function loadLayout() {
+            const saved = readSaved();
+            gridPanels().forEach(el => {
+                const place = isGridPlace(saved[el.dataset.section])
+                    ? Object.assign(defaultPlace(el.dataset.section), saved[el.dataset.section])
+                    : defaultPlace(el.dataset.section);
+                applyPlacement(el, place);
             });
-
-            const mainLayout = document.querySelector('.main-layout');
-            mainLayout.addEventListener('dragover', handleDragOver);
-            mainLayout.addEventListener('drop', handleDrop);
-        });
-
-        function handleDragStart(e) {
-            draggedElement = this;
-            const rect = this.getBoundingClientRect();
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
-            
-            // Make the element semi-transparent while dragging
-            this.style.opacity = '0.5';
-            this.style.zIndex = '1000';
         }
 
-        function handleDragEnd(e) {
-            if (draggedElement) {
-                draggedElement.style.opacity = '1';
-                draggedElement.style.zIndex = 'auto';
-                draggedElement = null;
-            }
+        function overlaps(a, b) {
+            return a.col < b.col + b.colSpan
+                && a.col + a.colSpan > b.col
+                && a.row < b.row + b.rowSpan
+                && a.row + a.rowSpan > b.row;
         }
 
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
+        function findSlot(wanted, exceptEl) {
+            const others = gridPanels()
+                .filter(el => el !== exceptEl)
+                .map(el => currentPlace(el));
+            const fits = (cand) => !others.some(o => overlaps(cand, o));
+            if (fits(wanted)) return wanted;
 
-        function handleDrop(e) {
-            e.preventDefault();
-            if (draggedElement) {
-                const mainLayout = document.querySelector('.main-layout');
-                const rect = mainLayout.getBoundingClientRect();
-                
-                // Calculate new position relative to the main layout
-                const newX = e.clientX - rect.left - offsetX;
-                const newY = e.clientY - rect.top - offsetY;
-                
-                // Ensure the element stays within bounds
-                const maxX = rect.width - draggedElement.offsetWidth;
-                const maxY = rect.height - draggedElement.offsetHeight;
-                
-                const finalX = Math.max(0, Math.min(newX, maxX));
-                const finalY = Math.max(0, Math.min(newY, maxY));
-                
-                // Apply the new position
-                draggedElement.style.position = 'absolute';
-                draggedElement.style.left = finalX + 'px';
-                draggedElement.style.top = finalY + 'px';
-                
-                // Save position to localStorage
-                savePosition(draggedElement.dataset.section, finalX, finalY);
-            }
-        }
-
-        function savePosition(section, x, y) {
-            const positions = JSON.parse(localStorage.getItem('dashboardPositions') || '{}');
-            positions[section] = { x, y };
-            localStorage.setItem('dashboardPositions', JSON.stringify(positions));
-        }
-
-        function loadPositions() {
-            const positions = JSON.parse(localStorage.getItem('dashboardPositions') || '{}');
-            const draggables = document.querySelectorAll('.draggable');
-            
-            draggables.forEach(draggable => {
-                const section = draggable.dataset.section;
-                const position = positions[section];
-                if (position) {
-                    draggable.style.position = 'absolute';
-                    draggable.style.left = position.x + 'px';
-                    draggable.style.top = position.y + 'px';
+            let best = null;
+            for (let row = 1; row <= MAX_ROWS - wanted.rowSpan + 1; row++) {
+                for (let col = 1; col <= COLS - wanted.colSpan + 1; col++) {
+                    const cand = {
+                        col, row,
+                        colSpan: wanted.colSpan,
+                        rowSpan: wanted.rowSpan
+                    };
+                    if (!fits(cand)) continue;
+                    const d = Math.abs(col - wanted.col) + Math.abs(row - wanted.row) * 2;
+                    if (!best || d < best.d) best = { d, cand };
                 }
-            });
+            }
+            return best ? best.cand : wanted;
         }
 
-        // Load saved positions when page loads
+        function gridMetrics() {
+            const grid = document.querySelector('.dashboard-grid');
+            const rect = grid.getBoundingClientRect();
+            const styles = getComputedStyle(grid);
+            const gap = parseFloat(styles.columnGap) || 16;
+            const colW = (rect.width - gap * (COLS - 1)) / COLS;
+            const rowH = Math.max(112, (rect.height - gap * 4) / 5);
+            return { grid, rect, gap, colW, rowH };
+        }
+
+        function snapFromPoint(clientX, clientY, place) {
+            const m = gridMetrics();
+            let col = Math.round((clientX - m.rect.left + m.gap / 2) / (m.colW + m.gap)) + 1;
+            let row = Math.round((clientY - m.rect.top + m.gap / 2) / (m.rowH + m.gap)) + 1;
+            if (place.colSpan >= 12) col = 1;
+            col = Math.max(1, Math.min(col, COLS - place.colSpan + 1));
+            row = Math.max(1, Math.min(row, MAX_ROWS - place.rowSpan + 1));
+            return { col, row, colSpan: place.colSpan, rowSpan: place.rowSpan };
+        }
+
+        function startDrag(e, el) {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const rect = el.getBoundingClientRect();
+            drag = {
+                el,
+                offsetX: e.clientX - rect.left,
+                offsetY: e.clientY - rect.top,
+                place: currentPlace(el)
+            };
+            el.classList.add('dragging');
+            el.style.width = rect.width + 'px';
+            el.style.left = rect.left + 'px';
+            el.style.top = rect.top + 'px';
+            window.addEventListener('pointermove', onDragMove);
+            window.addEventListener('pointerup', onDragUp, { once: true });
+        }
+
+        function onDragMove(e) {
+            if (!drag) return;
+            drag.el.style.left = (e.clientX - drag.offsetX) + 'px';
+            drag.el.style.top = (e.clientY - drag.offsetY) + 'px';
+        }
+
+        function onDragUp(e) {
+            window.removeEventListener('pointermove', onDragMove);
+            if (!drag) return;
+            const { el, place, offsetX, offsetY } = drag;
+            const wanted = snapFromPoint(e.clientX - offsetX, e.clientY - offsetY, place);
+            const slot = findSlot(wanted, el);
+            applyPlacement(el, slot);
+            savePlace(el.dataset.section, slot);
+            drag = null;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            loadPositions();
+            gridPanels().forEach(el => {
+                const handle = el.querySelector('.drag-handle');
+                if (!handle) return;
+                handle.addEventListener('pointerdown', function(e) {
+                    startDrag(e, el);
+                });
+            });
+            loadLayout();
         });
 
         function playDing() {
@@ -369,7 +458,9 @@
             document.getElementById('timer').textContent = '00:00';
             clearInterval(timer);
             document.getElementById('timer').style.color = 'black';
-            document.querySelector('.resolution').textContent = '';
+            const resBox = document.getElementById('resolution-box');
+            resBox.innerHTML = '<div class="drag-handle">⋮⋮</div>';
+            resBox.classList.add('empty');
             document.getElementById('timer-min').value = '';
             document.getElementById('timer-sec').value = '';
             // Reset participant names
@@ -399,6 +490,13 @@
             document.getElementById('judge3-neg').classList.remove('selected');
             document.getElementById('judge3-draw').classList.remove('selected');
             document.getElementById('judges-result').textContent = '';
+            resetLayout();
+            const resHandle = document.querySelector('#resolution-box .drag-handle');
+            if (resHandle) {
+                resHandle.addEventListener('pointerdown', function(e) {
+                    startDrag(e, document.getElementById('resolution-box'));
+                });
+            }
         }
 
         // PARTICIPANT NAME LOGIC
