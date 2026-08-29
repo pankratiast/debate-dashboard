@@ -44,7 +44,7 @@ body {
     border-radius: 0;
     box-shadow: none;
     margin: 0 auto;
-    padding: 12px 16px 16px;
+    padding: 16px 24px 24px;
 }
 
 /* HEADER */
@@ -76,13 +76,13 @@ body {
 
 .main-title {
     font-family: 'Bagnard', 'IM Fell English', serif;
-    font-size: 1.55em;
+    font-size: 2.15em;
     font-weight: 700;
     color: var(--navy);
-    letter-spacing: 1px;
-    line-height: 1.1;
+    letter-spacing: 2px;
+    line-height: 1.15;
     margin: 0;
-    padding: 0 0 4px 0;
+    padding: 0 0 8px 0;
     border-bottom: 1px solid var(--gold);
     background: none;
     box-shadow: none;
@@ -102,13 +102,13 @@ body {
     border-top: 3px solid var(--gold);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 14px 38px 30px 12px;
+    padding: 16px 16px 28px 16px;
     width: 100%;
     min-width: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .panel.quiet {
@@ -119,9 +119,9 @@ body {
 .stage-header,
 .judges-header {
     font-family: 'Cinzel', serif;
-    font-size: 0.88em;
+    font-size: 1.05em;
     font-weight: 700;
-    margin: 0 0 6px 0;
+    margin: 0 0 12px 0;
     color: var(--navy);
     letter-spacing: 0.04em;
 }
@@ -170,15 +170,22 @@ body {
 }
 
 .shrink-toggle {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
+    position: absolute !important;
+    top: auto !important;
+    left: auto !important;
+    right: 6px !important;
+    bottom: 6px !important;
+    inset: auto 6px 6px auto;
     width: 22px;
     height: 22px;
-    padding: 0;
+    min-width: 22px;
+    margin: 0 !important;
+    padding: 0 !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    align-self: auto;
+    flex: none;
     background: #fff;
     color: var(--navy);
     border: 1.5px solid var(--navy);
@@ -186,7 +193,7 @@ body {
     font-size: 16px;
     font-weight: 700;
     line-height: 1;
-    z-index: 12;
+    z-index: 13;
     cursor: pointer;
 }
 
@@ -219,7 +226,7 @@ body {
 }
 
 .panel.shrunk .shrunk-label {
-    display: block;
+    display: block !important;
 }
 
 .draggable {
@@ -247,7 +254,7 @@ button {
     font-size: 0.92em;
     letter-spacing: 0.02em;
     border-radius: 8px;
-    padding: 5px 10px;
+    padding: 8px 16px;
     cursor: pointer;
     box-shadow: none;
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -260,6 +267,11 @@ button {
     background: var(--navy);
     color: #fff;
     border: 1.5px solid var(--navy);
+}
+
+.reset button {
+    padding: 14px 28px;
+    font-size: 1.1em;
 }
 
 .btn-primary:hover,
@@ -298,7 +310,7 @@ button {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
-    gap: 10px;
+    gap: 16px;
     width: 100%;
     flex: 1;
     min-height: 0;
@@ -374,7 +386,7 @@ button {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    padding: 16px 16px 28px 16px;
 }
 
 .coin-flip {
@@ -385,6 +397,7 @@ button {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 16px 16px 28px 16px;
 }
 
 .declare-winner {
@@ -395,6 +408,7 @@ button {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    padding: 16px 16px 28px 16px;
     align-items: center;
     justify-content: center;
 }
@@ -419,7 +433,7 @@ button {
 /* PARTICIPANTS */
 .participants-display {
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.9em, 1.6vw, 1.15em);
+    font-size: 1.55em;
     font-weight: 700;
     color: var(--navy);
     letter-spacing: 0.03em;
@@ -457,7 +471,7 @@ button {
 }
 
 .participant-input {
-    width: 110px;
+    width: 160px;
 }
 
 .vs-label {
@@ -490,8 +504,8 @@ button {
 }
 
 .coin {
-    width: 40px;
-    height: 40px;
+    width: 56px;
+    height: 56px;
     background: var(--navy);
     border: 2px solid var(--gold);
     border-radius: 50%;
@@ -500,7 +514,7 @@ button {
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 28px;
     box-shadow: var(--shadow);
     perspective: 600px;
     color: #fff;
@@ -520,7 +534,7 @@ button {
 /* TIMER */
 .timer-display {
     font-family: 'Cinzel', serif;
-    font-size: clamp(1.5em, 4.5vw, 2.3em);
+    font-size: 2.8em;
     color: var(--navy);
     font-weight: 700;
     margin-top: 6px;
@@ -538,7 +552,7 @@ button {
 }
 
 .timer-input {
-    width: 52px;
+    width: 64px;
     text-align: center;
 }
 
@@ -568,8 +582,8 @@ button {
 }
 
 .stage-list li {
-    padding: 2px 8px;
-    font-size: 0.82em;
+    padding: 6px 12px;
+    font-size: 0.92em;
     font-family: 'EB Garamond', serif;
     font-weight: 400;
     border-left: 3px solid transparent;
@@ -612,8 +626,8 @@ button {
 }
 
 .vote-btn {
-    padding: 6px 14px;
-    font-size: 0.82em;
+    padding: 10px 24px;
+    font-size: 1em;
 }
 
 .vote-count p {
@@ -632,9 +646,8 @@ button {
 }
 
 .winner-btn {
-    font-size: 0.78em;
-    padding: 6px 10px;
-    max-width: 100%;
+    font-size: 1em;
+    padding: 10px 24px;
 }
 
 @keyframes confetti {
@@ -677,9 +690,9 @@ button {
 }
 
 .decision-btn {
-    padding: 4px 10px;
-    font-size: 0.78em;
-    min-width: 44px;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    min-width: 45px;
 }
 
 .judges-result {

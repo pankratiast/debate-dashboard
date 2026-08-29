@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rostra Debate Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
     <div class="main-layout">
@@ -24,8 +24,7 @@
             <!-- 1. PARTICIPANT NAMES SECTION -->
             <div class="participants-section panel draggable" data-section="participants">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Aff vs Neg</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Aff vs Neg</span>
                 <div class="participants-display">
                     <span id="aff-name-display">Affirmative</span> <span class="vs-label">vs.</span> <span id="neg-name-display">Negative</span>
                 </div>
@@ -35,19 +34,19 @@
                     <span class="vs-label vs-quiet">vs.</span>
                     <input type="text" id="neg-name" class="participant-input" placeholder="Negative Name">
                 </div>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <div class="resolution panel empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" data-section="resolution">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Resolution</span>
+                <span class="shrunk-label" hidden>Resolution</span>
                 <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <!-- 3. DEBATE STAGE SECTION -->
             <div class="debate-stage-section panel draggable" data-section="debate-stage">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Stages</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Stages</span>
                 <div class="stage-header">Debate Stages</div>
                 <div class="stage-controls">
                     <button id="stage-back" class="btn-primary" onclick="changeStage(-1)">&#8593; Back</button>
@@ -56,12 +55,12 @@
                 <ol class="stage-list" id="stage-list">
                     <!-- Stages will be rendered here -->
                 </ol>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <div class="timer panel draggable" data-section="timer">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Timer</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Timer</span>
                 <div class="timer-input-row">
                     <input type="number" class="timer-input" min="0" placeholder="Min" id="timer-min">
                     <span>:</span>
@@ -72,33 +71,33 @@
                     <button class="btn-ghost" onclick="resetTimer()">Reset Timer</button>
                 </div>
                 <div class="timer-display" id="timer">00:00</div>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <div class="coin-flip panel draggable" data-section="coin-flip">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Coin</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Coin</span>
                 <div id="coin-result" class="coin-result"></div>
                 <div class="coin" id="coin">🪙</div>
                 <button class="btn-primary" onclick="flipCoin()">Flip Coin</button>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <div class="declare-winner panel draggable" id="declare-winner-box" data-section="declare-winner">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Winner</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Winner</span>
                 <div id="confetti-container"></div>
                 <div class="section-heading">Declare Winner</div>
                 <div class="winner-actions">
                     <button class="winner-btn btn-primary" onclick="declareWinner('Affirmative')">Affirmative</button>
                     <button class="winner-btn btn-primary" onclick="declareWinner('Negative')">Negative</button>
                 </div>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <div class="vote-count panel quiet draggable" data-section="vote-count">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Votes</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Votes</span>
                 <h3>Pre-Debate Vote Count</h3>
                 <div class="vote-row">
                     <button class="vote-btn btn-ghost" onclick="vote('pre-aff')">Affirmative</button>
@@ -111,12 +110,12 @@
                     <button class="vote-btn btn-ghost" onclick="vote('post-neg')">Negative</button>
                 </div>
                 <p>Aff: <span id="post-aff-count">0</span> | Neg: <span id="post-neg-count">0</span></p>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <div class="judges-section panel quiet draggable" data-section="judges">
                 <div class="drag-handle" contenteditable="false">⋮⋮</div>
-                <span class="shrunk-label">Judges</span>
-                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
+                <span class="shrunk-label" hidden>Judges</span>
                 <div class="judges-header">Judges' Decision</div>
                 <div class="judge-row">
                     <input type="text" class="judge-name" placeholder="Judge 1 Name" id="judge1-name">
@@ -143,6 +142,7 @@
                     </div>
                 </div>
                 <div class="judges-result" id="judges-result"></div>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
         </div>
     </div>
@@ -155,7 +155,7 @@
         // GRID SNAP — panels stay on the 12-col CSS grid. Drag from the ⋮⋮ handle.
         const COLS = 12;
         const MAX_ROWS = 10;
-        const LAYOUT_KEY = 'dashboardLayoutV3';
+        const LAYOUT_KEY = 'dashboardLayoutV4';
         const DEFAULT_LAYOUT = {
             participants: { col: 1, colSpan: 5, row: 1, rowSpan: 1 },
             resolution: { col: 6, colSpan: 7, row: 1, rowSpan: 1 },
@@ -211,7 +211,12 @@
             el.style.gridRow = place.row + ' / span ' + place.rowSpan;
             el.classList.toggle('shrunk', !!place.shrunk);
             const btn = el.querySelector('.shrink-toggle');
-            if (btn) btn.textContent = place.shrunk ? '+' : '−';
+            if (btn) {
+                btn.textContent = place.shrunk ? '+' : '−';
+                btn.title = place.shrunk ? 'Expand' : 'Shrink';
+            }
+            const label = el.querySelector('.shrunk-label');
+            if (label) label.hidden = !place.shrunk;
         }
 
         function bindPanelChrome(el) {
@@ -253,7 +258,7 @@
 
         function resolutionChrome() {
             return '<div class="drag-handle" contenteditable="false">⋮⋮</div>'
-                + '<span class="shrunk-label">Resolution</span>'
+                + '<span class="shrunk-label" hidden>Resolution</span>'
                 + '<button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>';
         }
 
