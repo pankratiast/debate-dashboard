@@ -229,27 +229,78 @@
                 && a.row + a.rowSpan > b.row;
         }
 
-        function findSlot(wanted, exceptEl) {
-            const others = gridPanels()
-                .filter(el => el !== exceptEl)
-                .map(el => currentPlace(el));
-            const fits = (cand) => !others.some(o => overlaps(cand, o));
+        function findSlotAgainst(wanted, occupancy) {
+            const fits = (cand) => !occupancy.some(o => overlaps(cand, o));
             if (fits(wanted)) return wanted;
 
             let best = null;
             for (let row = 1; row <= MAX_ROWS - wanted.rowSpan + 1; row++) {
                 for (let col = 1; col <= COLS - wanted.colSpan + 1; col++) {
                     const cand = {
-                        col, row,
+                        col: col,
+                        row: row,
                         colSpan: wanted.colSpan,
                         rowSpan: wanted.rowSpan
                     };
                     if (!fits(cand)) continue;
                     const d = Math.abs(col - wanted.col) + Math.abs(row - wanted.row) * 2;
-                    if (!best || d < best.d) best = { d, cand };
+                    if (!best || d < best.d) best = { d: d, cand: cand };
                 }
             }
             return best ? best.cand : wanted;
+        }
+
+        function clearBumpPreview() {
+            gridPanels().forEach(el => el.classList.remove('will-bump'));
+        }
+
+        function previewBumps(wanted, exceptEl) {
+            gridPanels().forEach(el => {
+                const hit = el !== exceptEl && overlaps(currentPlace(el), wanted);
+                el.classList.toggle('will-bump', hit);
+            });
+        }
+
+        function commitLayout(placements) {
+            const all = {};
+            placements.forEach(function(place, el) {
+                applyPlacement(el, place);
+                all[el.dataset.section] = {
+                    col: place.col,
+                    colSpan: place.colSpan,
+                    row: place.row,
+                    rowSpan: place.rowSpan
+                };
+            });
+            localStorage.setItem(LAYOUT_KEY, JSON.stringify(all));
+            localStorage.removeItem('dashboardPositions');
+        }
+
+        function dropAndBump(droppedEl, wanted) {
+            const placements = new Map();
+            placements.set(droppedEl, wanted);
+
+            const occupancy = [wanted];
+            const toBump = [];
+            gridPanels().forEach(function(el) {
+                if (el === droppedEl) return;
+                const place = currentPlace(el);
+                if (overlaps(place, wanted)) {
+                    toBump.push(el);
+                } else {
+                    placements.set(el, place);
+                    occupancy.push(place);
+                }
+            });
+
+            toBump.forEach(function(el) {
+                const old = currentPlace(el);
+                const slot = findSlotAgainst(old, occupancy);
+                placements.set(el, slot);
+                occupancy.push(slot);
+            });
+
+            commitLayout(placements);
         }
 
         function gridMetrics() {
@@ -295,6 +346,8 @@
             if (!drag) return;
             drag.el.style.left = (e.clientX - drag.offsetX) + 'px';
             drag.el.style.top = (e.clientY - drag.offsetY) + 'px';
+            const wanted = snapFromPoint(e.clientX - drag.offsetX, e.clientY - drag.offsetY, drag.place);
+            previewBumps(wanted, drag.el);
         }
 
         function onDragUp(e) {
@@ -302,9 +355,8 @@
             if (!drag) return;
             const { el, place, offsetX, offsetY } = drag;
             const wanted = snapFromPoint(e.clientX - offsetX, e.clientY - offsetY, place);
-            const slot = findSlot(wanted, el);
-            applyPlacement(el, slot);
-            savePlace(el.dataset.section, slot);
+            clearBumpPreview();
+            dropAndBump(el, wanted);
             drag = null;
         }
 

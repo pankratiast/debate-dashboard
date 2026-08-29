@@ -117,27 +117,47 @@ body {
     letter-spacing: 0.04em;
 }
 
-/* DRAG HANDLES — nearly invisible until hover */
+/* DRAG HANDLES — high-contrast grab corner */
 .drag-handle {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 0;
+    right: 0;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
     color: var(--gold);
-    font-size: 14px;
+    border: 2px solid var(--gold);
+    border-radius: 0 var(--radius) 0 10px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
     cursor: grab;
     user-select: none;
-    opacity: 0.08;
-    transition: opacity 0.2s;
-    z-index: 10;
+    opacity: 1;
+    z-index: 12;
     touch-action: none;
+    box-shadow: 0 1px 4px rgba(32, 78, 128, 0.35);
 }
 
 .draggable:hover .drag-handle {
-    opacity: 0.55;
+    background: var(--gold);
+    color: var(--navy);
 }
 
-.draggable:active .drag-handle {
+.draggable:active .drag-handle,
+.drag-handle:active {
     cursor: grabbing;
+    background: var(--gold);
+    color: var(--navy);
+}
+
+.will-bump {
+    outline: 2px dashed var(--gold);
+    outline-offset: -2px;
 }
 
 .draggable {
@@ -249,10 +269,10 @@ button {
 
 .resolution::-webkit-resizer {
     background: var(--gold);
-    border: 1.5px solid var(--navy);
-    border-radius: 4px;
-    width: 12px;
-    height: 12px;
+    border: 2px solid var(--navy);
+    border-radius: 2px;
+    width: 18px;
+    height: 18px;
 }
 
 .resolution.empty:before {
