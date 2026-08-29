@@ -16,9 +16,8 @@
     box-sizing: border-box;
 }
 
-html {
-    height: 100%;
-    overflow: hidden;
+html, body {
+    min-height: 100%;
 }
 
 body {
@@ -26,8 +25,7 @@ body {
     background: url('background.jpg') no-repeat center center fixed;
     background-size: cover;
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
     cursor: url('gladius-cursor.png'), auto;
     color: var(--navy);
 }
@@ -37,9 +35,7 @@ body {
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
     width: 100%;
     max-width: 1280px;
     position: relative;
@@ -48,7 +44,7 @@ body {
     border-radius: 0;
     box-shadow: none;
     margin: 0 auto;
-    padding: 8px 12px 10px;
+    padding: 12px 16px 16px;
 }
 
 /* HEADER */
@@ -80,7 +76,7 @@ body {
 
 .main-title {
     font-family: 'Bagnard', 'IM Fell English', serif;
-    font-size: 1.28em;
+    font-size: 1.55em;
     font-weight: 700;
     color: var(--navy);
     letter-spacing: 1px;
@@ -106,10 +102,13 @@ body {
     border-top: 3px solid var(--gold);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 8px 10px;
+    padding: 14px 38px 30px 12px;
     width: 100%;
     min-width: 0;
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .panel.quiet {
@@ -168,6 +167,59 @@ body {
 .will-bump {
     outline: 2px dashed var(--gold);
     outline-offset: -2px;
+}
+
+.shrink-toggle {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: var(--navy);
+    border: 1.5px solid var(--navy);
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    z-index: 12;
+    cursor: pointer;
+}
+
+.shrink-toggle:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+}
+
+.shrunk-label {
+    display: none;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.9em;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panel.shrunk {
+    align-self: start;
+    min-height: 44px;
+    padding: 8px 36px 8px 12px;
+    justify-content: center;
+}
+
+.panel.shrunk > *:not(.drag-handle):not(.shrink-toggle):not(.shrunk-label) {
+    display: none !important;
+}
+
+.panel.shrunk .shrunk-label {
+    display: block;
 }
 
 .draggable {
@@ -367,11 +419,12 @@ button {
 /* PARTICIPANTS */
 .participants-display {
     font-family: 'Cinzel', serif;
-    font-size: 1.05em;
+    font-size: clamp(0.9em, 1.6vw, 1.15em);
     font-weight: 700;
     color: var(--navy);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     line-height: 1.2;
+    overflow-wrap: anywhere;
 }
 
 .participants-label {
@@ -430,7 +483,7 @@ button {
     font-weight: 700;
     color: var(--gold);
     margin-bottom: 6px;
-    min-height: 1.1em;
+    min-height: 0;
     letter-spacing: 1px;
     text-align: center;
     font-family: 'Cinzel', serif;
@@ -467,11 +520,12 @@ button {
 /* TIMER */
 .timer-display {
     font-family: 'Cinzel', serif;
-    font-size: 2.1em;
+    font-size: clamp(1.5em, 4.5vw, 2.3em);
     color: var(--navy);
     font-weight: 700;
     margin-top: 6px;
     letter-spacing: 2px;
+    max-width: 100%;
     line-height: 1;
 }
 
@@ -490,8 +544,9 @@ button {
 
 .timer-actions {
     display: flex;
-    gap: var(--space-12);
+    gap: 8px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 /* STAGES */
@@ -507,6 +562,9 @@ button {
     padding-left: 0;
     margin: 0;
     text-align: left;
+    overflow-y: auto;
+    min-height: 0;
+    flex: 1;
 }
 
 .stage-list li {
@@ -549,7 +607,8 @@ button {
 .vote-row {
     display: flex;
     justify-content: center;
-    gap: var(--space-12);
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .vote-btn {
@@ -567,9 +626,15 @@ button {
 .winner-actions {
     display: flex;
     justify-content: center;
-    gap: var(--space-12);
+    gap: 8px;
     margin-top: 4px;
     flex-wrap: wrap;
+}
+
+.winner-btn {
+    font-size: 0.78em;
+    padding: 6px 10px;
+    max-width: 100%;
 }
 
 @keyframes confetti {
@@ -595,7 +660,8 @@ button {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
-    gap: var(--space-12);
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .judge-name {

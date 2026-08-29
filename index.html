@@ -23,7 +23,9 @@
         <div class="dashboard-grid">
             <!-- 1. PARTICIPANT NAMES SECTION -->
             <div class="participants-section panel draggable" data-section="participants">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Aff vs Neg</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <div class="participants-display">
                     <span id="aff-name-display">Affirmative</span> <span class="vs-label">vs.</span> <span id="neg-name-display">Negative</span>
                 </div>
@@ -36,12 +38,16 @@
             </div>
 
             <div class="resolution panel empty draggable" contenteditable="true" id="resolution-box" data-placeholder="TYPE DEBATE RESOLUTION HERE" data-section="resolution">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Resolution</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
             </div>
 
             <!-- 3. DEBATE STAGE SECTION -->
             <div class="debate-stage-section panel draggable" data-section="debate-stage">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Stages</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <div class="stage-header">Debate Stages</div>
                 <div class="stage-controls">
                     <button id="stage-back" class="btn-primary" onclick="changeStage(-1)">&#8593; Back</button>
@@ -53,7 +59,9 @@
             </div>
 
             <div class="timer panel draggable" data-section="timer">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Timer</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <div class="timer-input-row">
                     <input type="number" class="timer-input" min="0" placeholder="Min" id="timer-min">
                     <span>:</span>
@@ -67,14 +75,18 @@
             </div>
 
             <div class="coin-flip panel draggable" data-section="coin-flip">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Coin</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <div id="coin-result" class="coin-result"></div>
                 <div class="coin" id="coin">🪙</div>
                 <button class="btn-primary" onclick="flipCoin()">Flip Coin</button>
             </div>
 
             <div class="declare-winner panel draggable" id="declare-winner-box" data-section="declare-winner">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Winner</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <div id="confetti-container"></div>
                 <div class="section-heading">Declare Winner</div>
                 <div class="winner-actions">
@@ -84,7 +96,9 @@
             </div>
 
             <div class="vote-count panel quiet draggable" data-section="vote-count">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Votes</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <h3>Pre-Debate Vote Count</h3>
                 <div class="vote-row">
                     <button class="vote-btn btn-ghost" onclick="vote('pre-aff')">Affirmative</button>
@@ -100,7 +114,9 @@
             </div>
 
             <div class="judges-section panel quiet draggable" data-section="judges">
-                <div class="drag-handle">⋮⋮</div>
+                <div class="drag-handle" contenteditable="false">⋮⋮</div>
+                <span class="shrunk-label">Judges</span>
+                <button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>
                 <div class="judges-header">Judges' Decision</div>
                 <div class="judge-row">
                     <input type="text" class="judge-name" placeholder="Judge 1 Name" id="judge1-name">
@@ -139,7 +155,7 @@
         // GRID SNAP — panels stay on the 12-col CSS grid. Drag from the ⋮⋮ handle.
         const COLS = 12;
         const MAX_ROWS = 10;
-        const LAYOUT_KEY = 'dashboardLayoutV2';
+        const LAYOUT_KEY = 'dashboardLayoutV3';
         const DEFAULT_LAYOUT = {
             participants: { col: 1, colSpan: 5, row: 1, rowSpan: 1 },
             resolution: { col: 6, colSpan: 7, row: 1, rowSpan: 1 },
@@ -178,6 +194,7 @@
             const def = defaultPlace(el.dataset.section);
             const saved = readSaved()[el.dataset.section];
             if (isGridPlace(saved)) return Object.assign({}, def, saved);
+            def.shrunk = false;
             return def;
         }
 
@@ -192,6 +209,66 @@
             el.style.opacity = '';
             el.style.gridColumn = place.col + ' / span ' + place.colSpan;
             el.style.gridRow = place.row + ' / span ' + place.rowSpan;
+            el.classList.toggle('shrunk', !!place.shrunk);
+            const btn = el.querySelector('.shrink-toggle');
+            if (btn) btn.textContent = place.shrunk ? '+' : '−';
+        }
+
+        function bindPanelChrome(el) {
+            const handle = el.querySelector('.drag-handle');
+            if (handle && !handle.dataset.bound) {
+                handle.dataset.bound = '1';
+                handle.addEventListener('pointerdown', function(e) {
+                    startDrag(e, el);
+                });
+            }
+            const btn = el.querySelector('.shrink-toggle');
+            if (btn && !btn.dataset.bound) {
+                btn.dataset.bound = '1';
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleShrink(el);
+                });
+            }
+        }
+
+        function toggleShrink(el) {
+            const def = defaultPlace(el.dataset.section);
+            const place = currentPlace(el);
+            const shrunk = !el.classList.contains('shrunk');
+            place.shrunk = shrunk;
+            if (shrunk) {
+                place.rowSpan = 1;
+                place.colSpan = Math.min(3, Math.max(2, place.colSpan));
+            } else {
+                place.colSpan = def.colSpan;
+                place.rowSpan = def.rowSpan;
+            }
+            if (place.col + place.colSpan - 1 > COLS) {
+                place.col = COLS - place.colSpan + 1;
+            }
+            dropAndBump(el, place);
+        }
+
+        function resolutionChrome() {
+            return '<div class="drag-handle" contenteditable="false">⋮⋮</div>'
+                + '<span class="shrunk-label">Resolution</span>'
+                + '<button type="button" class="shrink-toggle" contenteditable="false" title="Shrink">−</button>';
+        }
+
+        function resolutionHasText() {
+            const box = document.getElementById('resolution-box');
+            let text = '';
+            box.childNodes.forEach(function(n) {
+                if (n.nodeType === 3) text += n.textContent;
+                else if (n.nodeType === 1 && !n.classList.contains('drag-handle')
+                    && !n.classList.contains('shrink-toggle')
+                    && !n.classList.contains('shrunk-label')) {
+                    text += n.textContent;
+                }
+            });
+            return text.trim().length > 0;
         }
 
         function savePlace(section, place) {
@@ -200,7 +277,8 @@
                 col: place.col,
                 colSpan: place.colSpan,
                 row: place.row,
-                rowSpan: place.rowSpan
+                rowSpan: place.rowSpan,
+                shrunk: !!place.shrunk
             };
             localStorage.setItem(LAYOUT_KEY, JSON.stringify(all));
             localStorage.removeItem('dashboardPositions');
@@ -269,7 +347,8 @@
                     col: place.col,
                     colSpan: place.colSpan,
                     row: place.row,
-                    rowSpan: place.rowSpan
+                    rowSpan: place.rowSpan,
+                    shrunk: !!place.shrunk
                 };
             });
             localStorage.setItem(LAYOUT_KEY, JSON.stringify(all));
@@ -320,7 +399,7 @@
             if (place.colSpan >= 12) col = 1;
             col = Math.max(1, Math.min(col, COLS - place.colSpan + 1));
             row = Math.max(1, Math.min(row, MAX_ROWS - place.rowSpan + 1));
-            return { col, row, colSpan: place.colSpan, rowSpan: place.rowSpan };
+            return { col: col, row: row, colSpan: place.colSpan, rowSpan: place.rowSpan, shrunk: !!place.shrunk };
         }
 
         function startDrag(e, el) {
@@ -361,13 +440,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            gridPanels().forEach(el => {
-                const handle = el.querySelector('.drag-handle');
-                if (!handle) return;
-                handle.addEventListener('pointerdown', function(e) {
-                    startDrag(e, el);
-                });
-            });
+            gridPanels().forEach(bindPanelChrome);
             loadLayout();
         });
 
@@ -511,7 +584,7 @@
             clearInterval(timer);
             document.getElementById('timer').style.color = 'black';
             const resBox = document.getElementById('resolution-box');
-            resBox.innerHTML = '<div class="drag-handle">⋮⋮</div>';
+            resBox.innerHTML = resolutionChrome();
             resBox.classList.add('empty');
             document.getElementById('timer-min').value = '';
             document.getElementById('timer-sec').value = '';
@@ -543,12 +616,7 @@
             document.getElementById('judge3-draw').classList.remove('selected');
             document.getElementById('judges-result').textContent = '';
             resetLayout();
-            const resHandle = document.querySelector('#resolution-box .drag-handle');
-            if (resHandle) {
-                resHandle.addEventListener('pointerdown', function(e) {
-                    startDrag(e, document.getElementById('resolution-box'));
-                });
-            }
+            bindPanelChrome(document.getElementById('resolution-box'));
         }
 
         // PARTICIPANT NAME LOGIC
@@ -559,11 +627,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const resBox = document.getElementById('resolution-box');
             function updatePlaceholder() {
-                if (resBox.textContent.trim() === '') {
-                    resBox.classList.add('empty');
-                } else {
-                    resBox.classList.remove('empty');
-                }
+                if (resolutionHasText()) resBox.classList.remove('empty');
+                else resBox.classList.add('empty');
             }
             resBox.addEventListener('input', updatePlaceholder);
             updatePlaceholder();
